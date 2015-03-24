@@ -32,6 +32,7 @@ def gör(a,b,c,d,e)
       #5 lika
     end
     ant = 1 ;ant1 = 2 ;ant2 = 3 ;ant3 = 4; loo = 1
+
     5.times do
       if $dice["tal#{ant}"] == x and $dice["tal#{ant1}"] == x and $dice["tal#{ant2}"] == x and $dice["tal#{ant3}"] == x
         #4 lika
@@ -47,13 +48,19 @@ def gör(a,b,c,d,e)
       end
       loo += 1
     end
-    ant = 1 ;ant1 = 2 ;ant2 = 3 ;ant3 = 4; loo = 1
-    20.times do
+
+    ant = 1 ;ant1 = 2 ;ant2 = 3 ; loo = 1
+    10.times do
+      $dice["tal#{"test#{loo}"}"] == ant*ant1*ant2
       if $dice["tal#{ant}"] == x and $dice["tal#{ant1}"] == x and $dice["tal#{ant2}"] == x
         #3 lika
       end
-
+    if ant2 == 5
+      ant2 ==
     end
+      loo += 1
+    end
+
     x += 1
   end
 
@@ -63,3 +70,5 @@ end
 dice(5,6)
 omg(1)
 gör($dice["tal1"],$dice["tal2"],$dice["tal3"],$dice["tal4"],$dice["tal5"])
+
+ant * ant1 * ant2
