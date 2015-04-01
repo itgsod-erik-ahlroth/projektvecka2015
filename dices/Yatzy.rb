@@ -1,6 +1,7 @@
 require 'colorize'
 $dice = Hash.new
 $value = Hash.new
+$sannolikheter = Hash.new
 $omg = 1
 $totpoint = 0
 $omgpoint = 0
@@ -51,6 +52,104 @@ def reroll(a,b,c,d,e)
   print "\b" *2 ;print ' ' ;print "\033[1B"; print"\r"
 end
 
+
+
+
+def enav?
+  x = 1
+  6.times do
+    ant = 1 ;hgr = 0
+    until ant == 6
+      if ant > hgr
+        hgr = ant
+        if $dice["tal#{ant}"] == x
+          if $omgpoint < x
+            $omgpoint = x
+            $value["omg#{$omg}:1"] = "1:#{x}"
+          elsif $omgpoint == x
+            $value["omg#{$omg}#{$likasvar}"]
+            $likasvar += 1
+          end
+        end
+      end
+      ant += 1
+    end
+    x += 1
+  end
+
+end
+
+def lika2?
+
+  x = 1
+  6.times do
+    ant = 1 ;ant1 = 2;hgr = 0
+    until ant == 6
+      if ant*ant1 > hgr
+        hgr = ant*ant1
+        if $dice["tal#{ant}"] == x and $dice["tal#{ant1}"] == x
+          if $omgpoint < x*2
+            $omgpoint = x*2
+            if $omg > 6
+              $value["omg#{$omg}:1"] = "6:#{x}"
+            else
+              $value["omg#{$omg}:1"] = "2:#{x}"
+            end
+          elsif $omgpoint == x*2
+            $value["omg#{$omg}#{$likasvar}"]
+            $likasvar += 1
+          end
+        else
+
+          if not $dice["tal#{ant}"] == x or not $dice["tal#{ant1}"] == x
+            if not $dice["tal#{ant1}"] == x and not $dice["tal#{ant}"] == x
+              if $omg > 6
+                $sannolikheter["6:#{x}"] = ((1/6)**2).to_f
+              else
+                $sannolikheter["6:#{x}"] = ((1/6)**2).to_f
+              end
+            end
+          else
+            $sannolikheter["6:#{x}"] = 1/6.to_f
+          end
+
+        end
+      end
+      if ant1 == 5
+        ant1 = 1
+        ant += 1
+        while ant == ant1
+          ant1 += 1
+          if ant1 == 6
+            ant1 = 1
+            ant += 1
+            if ant1 == 6
+              ant1 = 1
+              ant += 1
+            end
+          end
+        end
+      else
+        ant1 += 1
+        while ant == ant1
+          ant1 += 1
+          if ant1 == 6
+            ant1 = 1
+            ant += 1
+          end
+        end
+        while ant == ant1
+          ant1 += 1
+          if ant1 == 6
+            ant1 = 1
+            ant += 1
+          end
+        end
+      end
+    end
+    x += 1
+  end
+end
 
 def yatzy?
   a = 1
@@ -110,7 +209,7 @@ def lika4?
   end
   end
 
-  def lika3?
+def lika3?
     x = 1
     6.times do
 
@@ -174,72 +273,9 @@ x += 1
     end
     end
 
-  def lika2?
-
-    x = 1
-    6.times do
-
-      ant = 1 ;ant1 = 2;hgr = 0
-      until ant == 6
-        if ant*ant1 > hgr
-          hgr = ant*ant1
-          if $dice["tal#{ant}"] == x and $dice["tal#{ant1}"] == x
-
-              if $omgpoint < x*2
-                $omgpoint = x*2
-                if $omg > 6
-                  $value["omg#{$omg}:1"] = "6:#{x}"
-
-                else
-
-                $value["omg#{$omg}:1"] = "2:#{x}"
-                end
-              elsif $omgpoint == x*2
-                $value["omg#{$omg}#{$likasvar}"]
-                $likasvar += 1
-              end
-            end
-        end
-        if ant1 == 5
-          ant1 = 1
-          ant += 1
-          while ant == ant1
-            ant1 += 1
-            if ant1 == 6
-              ant1 = 1
-              ant += 1
-              if ant1 == 6
-                ant1 = 1
-                ant += 1
-              end
-            end
-          end
-        else
-          ant1 += 1
-          while ant == ant1
-            ant1 += 1
-            if ant1 == 6
-              ant1 = 1
-              ant += 1
-            end
-          end
-          while ant == ant1
-            ant1 += 1
-            if ant1 == 6
-              ant1 = 1
-              ant += 1
-            end
-          end
-        end
-      end
 
 
-      x += 1
-    end
-
-  end
-
-  def kak?
+def kak?
     x = 1
     y = 2
     6.times do
@@ -447,7 +483,6 @@ def litensteg?
     end
   end
 
-
 def storsteg?
   ant = 1;ant1 = 2;ant2 = 3;ant3 = 4;ant4 = 5
   until ant == 6
@@ -532,33 +567,7 @@ def storsteg?
   end
 end
 
-def enav?
-  x = 1
-  6.times do
-    ant = 1 ;hgr = 0
-    until ant == 6
-      if ant > hgr
-        hgr = ant
-        if $dice["tal#{ant}"] == x
-          if $omgpoint < x
-              $omgpoint = x
-            $value["omg#{$omg}:1"] = "1:#{x}"
 
-          elsif $omgpoint == x
-            $value["omg#{$omg}#{$likasvar}"]
-            $likasvar += 1
-          end
-
-        end
-      end
-      ant += 1
-    end
-
-
-    x += 1
-  end
-
-end
 
 def tvåpar?
   x = 1
@@ -671,6 +680,19 @@ end
 
 
 
+def sannolikhetfram
+
+  satsadetta = " "
+  min = 1
+  $sannolikheter.each do |värdelöstext, prioritet|
+    if prioritet > min
+      min = prioritet
+      satsadetta = värdelöstext
+    end
+  end
+  satsadetta #ska bli dekrypterad till vilka tärningar som ska kastas om
+
+end
 
 
 def värdera
@@ -685,10 +707,10 @@ def värdera
     ant += 1
   end
 
-  anv = $value["omg#{$omg}:#{rand(1..alternativ)}"]
-  num1, num2 = anv.split(":")
+  $bästvärde = $value["omg#{$omg}:#{rand(1..alternativ)}"].to_f
+  num1, num2 = $bästvärde.split(":")
 
-num1 = num1.to_i; num2 = num2.to_i
+num1 = num1.to_f; num2 = num2.to_f
 
   if num1 == 1
     puts "En av #{num2}"
@@ -743,7 +765,6 @@ def gör
 
 
   end
-
 
 
 dice(5,6)
